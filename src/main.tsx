@@ -1,21 +1,18 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
 
 import '@rainbow-me/rainbowkit/styles.css';
-import {Chain, connectorsForWallets, RainbowKitProvider} from '@rainbow-me/rainbowkit';
-import {phantomWallet, walletConnectWallet} from '@rainbow-me/rainbowkit/wallets';
-import {
-     createConfig,
-     http,
-     WagmiProvider,
-} from 'wagmi';
+import { Chain, connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { phantomWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import { createConfig, http, WagmiProvider } from 'wagmi';
 import { mainnet, polygon } from 'wagmi/chains';
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import WalletContextProvider from './WalletContextProvider.tsx';
 
 export const solana = {
-    id: 	900,
+    id: 900,
     name: 'Solana',
     nativeCurrency: {
         decimals: 9,
@@ -35,10 +32,6 @@ export const solana = {
     },
 } as const satisfies Chain;
 
-// =============================================================================
-// Rainbowkit Configuration
-// =============================================================================
-// initalize which chains your dapp will use, and set up a provider
 const chains: readonly [Chain, ...Chain[]] = [mainnet, polygon, solana];
 const connectors = connectorsForWallets(
     [
@@ -60,19 +53,20 @@ const config = createConfig({
         mainnet: http('https://mainnet.example.com'),
         sepolia: http('https://sepolia.example.com'),
     },
-})
+});
 
 const queryClient = new QueryClient();
-
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={config}>
-            <RainbowKitProvider>
-                <App />
-            </RainbowKitProvider>
-        </WagmiProvider>
+            <WagmiProvider config={config}>
+                <RainbowKitProvider>
+                    <WalletContextProvider>
+                        <App />
+                    </WalletContextProvider>
+                </RainbowKitProvider>
+            </WagmiProvider>
         </QueryClientProvider>
     </React.StrictMode>,
-)
+);
