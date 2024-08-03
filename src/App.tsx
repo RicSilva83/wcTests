@@ -12,6 +12,7 @@ function App() {
 
     useEffect(() => {
         const fetchBalance = async () => {
+            console.log('publicKey', publicKey);
             if (publicKey) {
                 const connection = new Connection('https://api.mainnet-beta.solana.com');
                 const balance = await connection.getBalance(new PublicKey(publicKey));
